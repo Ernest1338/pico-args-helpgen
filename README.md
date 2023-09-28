@@ -1,19 +1,6 @@
-# pico-args
-![Build Status](https://github.com/RazrFalcon/pico-args/workflows/Rust/badge.svg)
-[![Crates.io](https://img.shields.io/crates/v/pico-args.svg)](https://crates.io/crates/pico-args)
-[![Documentation](https://docs.rs/pico-args/badge.svg)](https://docs.rs/pico-args)
-[![Rust 1.32+](https://img.shields.io/badge/rust-1.31+-orange.svg)](https://www.rust-lang.org)
-![](https://img.shields.io/badge/unsafe-forbidden-brightgreen.svg)
+# pico-args-helpgen
 
-An ultra simple CLI arguments parser.
-
-If you think that this library doesn't support some feature, it's probably intentional.
-
-- No help generation
-- Only flags, options, free arguments and subcommands are supported
-- Options can be separated by a space, `=` or nothing. See build features
-- Arguments can be in any order
-- Non UTF-8 arguments are supported
+Fork of pico-args with clap like help generation.
 
 ## Build features
 
