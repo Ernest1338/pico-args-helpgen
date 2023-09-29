@@ -17,7 +17,7 @@ pico_args_helpgen::define_app! {
 fn parse_args() -> Result<AppArgs, pico_args_helpgen::Error> {
     let mut pargs = pico_args_helpgen::Arguments::from_env();
 
-    handle_help_version();
+    handle_help_version(); // Important!
 
     let args = AppArgs {
         subcommand: pargs.subcommand()?,
