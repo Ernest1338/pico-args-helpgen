@@ -718,7 +718,7 @@ macro_rules! define_app {
             let mut help = String::new();
             help.push_str(&format!("{} - {}\n\n", $app_name, $app_description));
             let binary_name = std::env::args().nth(0).unwrap();
-            help.push_str(&format!("Usage: {binary_name} {} [OPTIONS] {}\n\nOPTIONS:\n",
+            help.push_str(&format!("\x1b[1m\x1b[4mUsage:\x1b[00m \x1b[1m{binary_name}\x1b[00m {} [OPTIONS] {}\n\n\x1b[1m\x1b[4mOptions:\x1b[00m\n",
                 if subcommand.is_some() {
                     if subcommand.unwrap().is_empty() {
                         "<SUBCOMMAND>"
@@ -742,26 +742,26 @@ macro_rules! define_app {
                 let field_str = stringify!($field);
                 if field_str != "subcommand" && field_str != "freestanding" {
                     if $option.is_empty() {
-                        help.push_str(&format!("  --{}\t{}\n", field_str, $description));
+                        help.push_str(&format!("  \x1b[1m--{}\x1b[00m\t{}\n", field_str, $description));
                     } else {
-                        help.push_str(&format!("  {}\t{}\n", $option, $description));
+                        help.push_str(&format!("  \x1b[1m{}\x1b[00m\t{}\n", $option, $description));
                     }
                 }
             )*
             help.push_str("\n");
             let help_args: Vec<&str> = $help_args.split(", ").collect();
             if !$help_args.is_empty() {
-                help.push_str(&format!("  {}\tDisplay this help screen\n", $help_args));
+                help.push_str(&format!("  \x1b[1m{}\x1b[00m\tDisplay this help screen\n", $help_args));
             }
             let version_args: Vec<&str> = $version_args.split(", ").collect();
             if !$version_args.is_empty() {
-                help.push_str(&format!("  {}\tDisplay version information\n", $version_args));
+                help.push_str(&format!("  \x1b[1m{}\x1b[00m\tDisplay version information\n", $version_args));
             }
             help.trim().to_string()
         }
 
         pub fn gen_version() -> String {
-            format!("{} - version {}", $app_name, $app_version)
+            format!("\x1b[1m{}\x1b[00m - version \x1b[1m{}\x1b[00m", $app_name, $app_version)
         }
 
         pub fn handle_help_version() {
