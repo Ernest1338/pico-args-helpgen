@@ -40,12 +40,12 @@ fn main() {
     println!("{:#?}", args);
 }
 
-fn parse_args() -> Result<AppArgs, pico_args::Error> {
-    let mut pargs = pico_args::Arguments::from_env();
+fn parse_args() -> Result<AppArgs, pico_args_helpgen::Error> {
+    let mut pargs = pico_args_helpgen::Arguments::from_env();
 
     // Help has a higher priority and should be handled separately.
     if pargs.contains(["-h", "--help"]) {
-        print!("{}", HELP);
+        print!("{HELP}");
         std::process::exit(0);
     }
 

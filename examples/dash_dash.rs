@@ -8,7 +8,7 @@ struct Args {
     help: bool,
 }
 
-fn parse_args() -> Result<Args, pico_args::Error> {
+fn parse_args() -> Result<Args, pico_args_helpgen::Error> {
     // `from_vec` takes `OsString`, not `String`.
     let mut args: Vec<_> = std::env::args_os().collect();
     args.remove(0); // remove the executable path.
@@ -25,7 +25,7 @@ fn parse_args() -> Result<Args, pico_args::Error> {
     };
 
     // Now pass the remaining arguments through to `pico_args`.
-    let mut args = pico_args::Arguments::from_vec(args);
+    let mut args = pico_args_helpgen::Arguments::from_vec(args);
     let res = Args {
         forwarded_args,
         help: args.contains(["-h", "--help"]),
