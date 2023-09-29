@@ -686,14 +686,17 @@ impl Arguments {
     }
 }
 
-/// Args struct definition macro. TODO: better desc
+/// App definition macro. TODO: better desc
 #[macro_export]
 macro_rules! define_app {
     (
         app_name: $app_name:expr,
         app_description: $app_description:expr,
+        app_version: $app_version:expr,
+        help_args: $help_args:expr,
+        version_args: $version_args:expr,
         struct $struct_name:ident {
-            $($(#[$field_meta:meta])* $field:ident: $field_ty:ty, $description:expr,)*
+            $($(#[$field_meta:meta])* $field:ident: $field_ty:ty, $option:expr, $description:expr,)*
         }
     ) => {
         #[doc = $app_description]
@@ -702,32 +705,81 @@ macro_rules! define_app {
             $($(#[$field_meta])* pub $field: $field_ty,)*
         }
 
-        impl $struct_name {
-            pub fn info() -> Vec<(&'static str, &'static str)> {
-                let mut info = Vec::new();
-                info.push(($app_name, $app_description));
-                $(
-                    info.push((stringify!($field), $description));
-                )*
-                info
+        pub fn gen_help() -> String {
+            let mut subcommand: Option<&str> = None;
+            let mut freestanding: Option<&str> = None;
+            $(
+                match stringify!($field) {
+                    "subcommand" => subcommand = Some($option),
+                    "freestanding" => freestanding = Some($option),
+                    _ => ()
+                }
+            )*
+            let mut help = String::new();
+            help.push_str(&format!("{} - {}\n\n", $app_name, $app_description));
+            let binary_name = std::env::args().nth(0).unwrap();
+            help.push_str(&format!("Usage: {binary_name} {} [OPTIONS] {}\n\nOPTIONS:\n",
+                if subcommand.is_some() {
+                    if subcommand.unwrap().is_empty() {
+                        "<SUBCOMMAND>"
+                    } else {
+                        subcommand.unwrap()
+                    }
+                } else {
+                    ""
+                },
+                if freestanding.is_some() {
+                    if freestanding.unwrap().is_empty() {
+                        "<FREE STANDING ARG>"
+                    } else {
+                        freestanding.unwrap()
+                    }
+                } else {
+                    ""
+                },
+            ));
+            $(
+                let field_str = stringify!($field);
+                if field_str != "subcommand" && field_str != "freestanding" {
+                    if $option.is_empty() {
+                        help.push_str(&format!("  --{}\t{}\n", field_str, $description));
+                    } else {
+                        help.push_str(&format!("  {}\t{}\n", $option, $description));
+                    }
+                }
+            )*
+            help.push_str("\n");
+            let help_args: Vec<&str> = $help_args.split(", ").collect();
+            if !$help_args.is_empty() {
+                help.push_str(&format!("  {}\tDisplay this help screen\n", $help_args));
+            }
+            let version_args: Vec<&str> = $version_args.split(", ").collect();
+            if !$version_args.is_empty() {
+                help.push_str(&format!("  {}\tDisplay version information\n", $version_args));
+            }
+            help.trim().to_string()
+        }
+
+        pub fn gen_version() -> String {
+            format!("{} - version {}", $app_name, $app_version)
+        }
+
+        pub fn handle_help_version() {
+            let pargs: Vec<String> = std::env::args().collect();
+            let help_args: Vec<&str> = $help_args.split(", ").collect();
+            let version_args: Vec<&str> = $version_args.split(", ").collect();
+
+            if help_args.iter().any(|e| pargs.contains(&e.to_string())) {
+                println!("{}", gen_help());
+                std::process::exit(0);
+            }
+
+            if version_args.iter().any(|e| pargs.contains(&e.to_string())) {
+                println!("{}", gen_version());
+                std::process::exit(0);
             }
         }
     };
-}
-
-/// TODO
-pub fn gen_help(info: Vec<(&'static str, &'static str)>) -> String {
-    let mut help = String::new();
-    let mut info_iter = info.iter();
-    let app_info = info_iter.next().unwrap();
-    help.push_str(app_info.1);
-    help.push_str("\n\nUsage: ");
-    help.push_str(app_info.0);
-    help.push_str(" [OPTIONS]\n\nOPTIONS:\n");
-    for (k, v) in info_iter {
-        help.push_str(&format!("\t{k}\t{v}\n"));
-    }
-    help
 }
 
 // Display::to_string() is usually inlined, so by wrapping it in a non-inlined

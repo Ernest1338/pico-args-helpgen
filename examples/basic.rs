@@ -1,26 +1,23 @@
-#![allow(dead_code)]
-
-use pico_args_helpgen::{define_app, gen_help};
-
-define_app! {
+pico_args_helpgen::define_app! {
     app_name: "App name",
     app_description: "App description",
+    app_version: "v0.1.0",
+
+    help_args: "-h, --help",
+    version_args: "-V, --version",
 
     struct AppArgs {
-        subcommand: Option<String>, "The subcommand to execute.",
-        number: u32, "The number to use in some operation.",
-        flag: bool, "A flag to enable or disable a feature.",
-        freestanding: String, "A freestanding string argument.",
+        subcommand: Option<String>, "", "The subcommand to execute.",
+        number: u32, "-n, --number", "The number to use in some operation.",
+        flag: bool, "--flag", "A flag to enable or disable a feature.",
+        freestanding: String, "", "A freestanding string argument.",
     }
 }
 
 fn parse_args() -> Result<AppArgs, pico_args_helpgen::Error> {
     let mut pargs = pico_args_helpgen::Arguments::from_env();
 
-    if pargs.contains(["-h", "--help"]) {
-        print!("{}", gen_help(AppArgs::info()));
-        std::process::exit(0);
-    }
+    handle_help_version();
 
     let args = AppArgs {
         subcommand: pargs.subcommand()?,
