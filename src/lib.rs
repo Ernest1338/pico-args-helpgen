@@ -729,9 +729,11 @@ macro_rules! define_app {
                 }
             )*
             help.push_str("\n\x1b[1m\x1b[4mOptions:\x1b[00m\n");
+            let mut should_print_spacer = false;
             $(
                 let field_str = stringify!($field);
                 if field_str != "subcommand" && field_str != "freestanding" {
+                    should_print_spacer = true;
                     if $option.is_empty() {
                         help.push_str(&format!("  \x1b[1m--{}\x1b[00m\t{}\n", field_str, $description));
                     } else {
@@ -739,7 +741,9 @@ macro_rules! define_app {
                     }
                 }
             )*
-            help.push_str("\n");
+            if should_print_spacer {
+                help.push_str("\n");
+            }
             let help_args: Vec<&str> = $help_args.split(", ").collect();
             if !$help_args.is_empty() {
                 help.push_str(&format!("  \x1b[1m{}\x1b[00m\tDisplay this help screen\n", $help_args));
