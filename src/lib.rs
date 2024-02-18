@@ -719,24 +719,8 @@ macro_rules! define_app {
             help.push_str(&format!("{} - {}\n\n", $app_name, $app_description));
             let binary_name = std::env::args().nth(0).unwrap();
             help.push_str(&format!("\x1b[1m\x1b[4mUsage:\x1b[00m \x1b[1m{binary_name}\x1b[00m {} [OPTIONS] {}\n",
-                if subcommand.is_some() {
-                    if subcommand.unwrap().is_empty() {
-                        "<SUBCOMMAND>"
-                    } else {
-                        subcommand.unwrap()
-                    }
-                } else {
-                    ""
-                },
-                if freestanding.is_some() {
-                    if freestanding.unwrap().is_empty() {
-                        "<FREE STANDING ARG>"
-                    } else {
-                        freestanding.unwrap()
-                    }
-                } else {
-                    ""
-                },
+                if subcommand.is_some() { "<SUBCOMMAND>" } else { "" },
+                if freestanding.is_some() { "<FREE STANDING ARG>" } else { "" },
             ));
             $(
                 let field_str = stringify!($field);
