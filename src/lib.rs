@@ -718,7 +718,7 @@ macro_rules! define_app {
             let mut help = String::new();
             help.push_str(&format!("{} - {}\n\n", $app_name, $app_description));
             let binary_name = std::env::args().nth(0).unwrap();
-            help.push_str(&format!("\x1b[1m\x1b[4mUsage:\x1b[00m \x1b[1m{binary_name}\x1b[00m {} [OPTIONS] {}\n\n\x1b[1m\x1b[4mOptions:\x1b[00m\n",
+            help.push_str(&format!("\x1b[1m\x1b[4mUsage:\x1b[00m \x1b[1m{binary_name}\x1b[00m {} [OPTIONS] {}\n",
                 if subcommand.is_some() {
                     if subcommand.unwrap().is_empty() {
                         "<SUBCOMMAND>"
@@ -738,6 +738,13 @@ macro_rules! define_app {
                     ""
                 },
             ));
+            $(
+                let field_str = stringify!($field);
+                if field_str == "subcommand" && !$option.is_empty() {
+                    help.push_str(&format!("\n\x1b[1m\x1b[4mSubcommands:\x1b[00m {}\n", $option));
+                }
+            )*
+            help.push_str("\n\x1b[1m\x1b[4mOptions:\x1b[00m\n");
             $(
                 let field_str = stringify!($field);
                 if field_str != "subcommand" && field_str != "freestanding" {

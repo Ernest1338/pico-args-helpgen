@@ -7,7 +7,7 @@ pico_args_helpgen::define_app! {
     version_args: "-V, --version",
 
     struct AppArgs {
-        subcommand: Option<String>, "", "The subcommand to execute.",
+        subcommand: Option<String>, "new, add", "The subcommand to execute.",
         number: u32, "-n, --number", "The number to use in some operation.",
         flag: bool, "--flag", "A flag to enable or disable a feature.",
         freestanding: String, "", "A freestanding string argument.",
